@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreProfile Data Report</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 40px 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { border-bottom: 3px solid #2c3e50; padding-bottom: 10px; color: #2c3e50; }
+        .column-card { border: 1px solid #e1e4e8; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: #fafbfc; }
+        .column-card h2 { margin-top: 0; color: #0366d6; font-size: 1.4em; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
+        .stat-box { background: white; border: 1px solid #eaecef; padding: 15px; border-radius: 6px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .stat-label { font-size: 0.85em; color: #586069; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { display: block; font-size: 1.3em; font-weight: bold; color: #d73a49; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 CoreProfile Dataset Report</h1>
+        <p>Out-of-core statistical analysis powered by C++.</p>
+
+        <!-- Jinja2 loop to iterate over the dictionary -->
+        {% for col_name, stats in data.items() %}
+        <div class="column-card">
+            <h2>{{ col_name }}</h2>
+            <div class="grid">
+                <div class="stat-box">
+                    <span class="stat-label">Mean</span>
+                    <!-- We use Jinja's round filter to format the numbers nicely -->
+                    <span class="stat-value">{{ stats.mean | round(4) }}</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Variance</span>
+                    <span class="stat-value">{{ stats.variance | round(4) }}</span>
+                </div>
+                <!-- You can add Min, Max, and Null Count here later once you extract them! -->
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</body>
+</html>

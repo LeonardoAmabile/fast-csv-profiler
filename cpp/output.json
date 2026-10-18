@@ -1,0 +1,30 @@
+{
+  "col_0": {
+    "mean": 5.5,
+    "variance": 9.16667,
+    "min": 1,
+    "max": 10,
+    "null_count": 0
+  },
+  "col_1": {
+    "mean": 4.407,
+    "variance": 9.54042,
+    "min": 0.99,
+    "max": 9.99,
+    "null_count": 0
+  },
+  "col_2": {
+    "mean": 4.38778,
+    "variance": 9.26022,
+    "min": 1.49,
+    "max": 9.5,
+    "null_count": 1
+  },
+  "col_3": {
+    "mean": 15.8,
+    "variance": 274.622,
+    "min": 2,
+    "max": 55,
+    "null_count": 0
+  }
+}
