@@ -74,4 +74,4 @@ While the current architecture is highly optimized for single-threaded execution
 
 - CI/CD Pipeline: Implement GitHub Actions with pytest (for Python) and GTest (for C++) to automatically validate mathematical accuracy and ensure the Welford algorithm remains stable on edge cases.
 
-### Developed as a portfolio project bridging high-performance Systems Engineering with Data Science.
+*Developed as a portfolio project bridging high-performance Systems Engineering with Data Science.*
