@@ -1,22 +1,27 @@
 #pragma once
 
 #include "welford.hpp"
+#include "categorical.hpp"
 #include <vector>
 #include <string>
 #include <string_view>
 
+// Nuova struttura: ogni colonna ha il suo motore numerico e il suo motore testuale
+struct ColumnTracker {
+    Welford numeric;
+    Categorical text;
+    unsigned long long null_count = 0;
+};
+
 class Profiler {
 private:
-    // A dynamic array holding a Welford statistics object for each column
-    std::vector<Welford> columns_stats;
+    std::vector<ColumnTracker> columns; // <-- Sostituisce columns_stats
+    std::vector<std::string> column_names;
+    bool is_first_row;
+    unsigned long long total_rows;
 
 public:
-    // Constructor: initializes the profiler
-    explicit Profiler();
-
-    // Takes a single parsed row and updates the statistics for all columns
+    Profiler();
     void process_row(const std::vector<std::string_view>& row);
-
-    // Packages the final statistics and writes them to a JSON file
-    void generate_json(const std::string& output_path);
+    void generate_json(const std::string& output_path, double exec_time_sec); 
 };

@@ -7,35 +7,109 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 40px 20px; }
         .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h1 { border-bottom: 3px solid #2c3e50; padding-bottom: 10px; color: #2c3e50; }
+        h1 { border-bottom: 3px solid #2c3e50; padding-bottom: 10px; color: #2c3e50; margin-bottom: 20px; }
+        .performance-banner { background-color: #e6f7ff; border-left: 5px solid #0366d6; padding: 15px 20px; margin-bottom: 30px; border-radius: 5px; color: #24292e; font-size: 1.1em; }
+        .performance-banner strong { color: #0366d6; }
         .column-card { border: 1px solid #e1e4e8; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: #fafbfc; }
-        .column-card h2 { margin-top: 0; color: #0366d6; font-size: 1.4em; }
+        .column-card h2 { margin-top: 0; color: #0366d6; font-size: 1.4em; display: flex; align-items: center; }
+        
+        /* Stile per l'etichetta del tipo di colonna (es. NUMERIC, CATEGORICAL) */
+        .badge { font-size: 0.5em; background: #e1e4e8; padding: 4px 10px; border-radius: 12px; margin-left: 15px; color: #586069; letter-spacing: 1px; }
+        .badge.numeric { background: #d4edda; color: #155724; }
+        .badge.categorical { background: #cce5ff; color: #004085; }
+        
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
         .stat-box { background: white; border: 1px solid #eaecef; padding: 15px; border-radius: 6px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .stat-label { font-size: 0.85em; color: #586069; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { display: block; font-size: 1.3em; font-weight: bold; color: #d73a49; margin-top: 5px; }
+        
+
+        /* Stile per la lista delle parole più frequenti e le barre CSS */
+        .top-values-list { margin-top: 10px; text-align: left; font-size: 0.95em; }
+        .top-values-row { display: flex; flex-direction: column; border-bottom: 1px solid #eaecef; padding: 8px 0; }
+        .top-values-row:last-child { border-bottom: none; }
+        .top-values-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        
+        /* La magia visiva delle barre */
+        .bar-bg { width: 100%; background-color: #eaecef; height: 6px; border-radius: 3px; overflow: hidden; }
+        .bar-fill { height: 100%; background-color: #0366d6; border-radius: 3px; transition: width 0.5s ease-out; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📊 CoreProfile Dataset Report</h1>
-        <p>Out-of-core statistical analysis powered by C++.</p>
+        
+        <div class="performance-banner">
+            ⚡ <strong>Performance:</strong> Analyzed <strong>{{ data.metadata.total_rows }}</strong> rows in just <strong>{{ data.metadata.execution_time_sec | round(5) }}</strong> seconds.
+        </div>
 
-        <!-- Jinja2 loop to iterate over the dictionary -->
-        {% for col_name, stats in data.items() %}
+        {% for col_name, stats in data.columns.items() %}
         <div class="column-card">
-            <h2>{{ col_name }}</h2>
+            <h2>
+                {{ col_name }} 
+                <span class="badge {{ stats.type }}">{{ stats.type | upper }}</span>
+            </h2>
             <div class="grid">
+                
+                <!-- SE È NUMERICA (o mista), mostra le statistiche matematiche -->
+                {% if stats.type == 'numeric' or stats.type == 'mixed' %}
                 <div class="stat-box">
                     <span class="stat-label">Mean</span>
-                    <!-- We use Jinja's round filter to format the numbers nicely -->
                     <span class="stat-value">{{ stats.mean | round(4) }}</span>
                 </div>
                 <div class="stat-box">
-                    <span class="stat-label">Variance</span>
-                    <span class="stat-value">{{ stats.variance | round(4) }}</span>
+                    <span class="stat-label">Std Dev</span>
+                    <span class="stat-value">{{ stats.std_dev | round(4) }}</span>
                 </div>
-                <!-- You can add Min, Max, and Null Count here later once you extract them! -->
+                <div class="stat-box">
+                    <span class="stat-label">Min / Max</span>
+                    <span class="stat-value" style="font-size: 1.1em; color: #24292e;">
+                        {% if stats.min is not none %}{{ stats.min | round(2) }}{% else %}N/A{% endif %} 
+                        <span style="color:#ccc;">/</span> 
+                        {% if stats.max is not none %}{{ stats.max | round(2) }}{% else %}N/A{% endif %}
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- SE È TESTUALE (o mista), mostra le categorie più frequenti -->
+                {% if stats.type == 'categorical' or stats.type == 'mixed' %}
+                    {% if stats.is_high_cardinality %}
+                    <div class="stat-box" style="grid-column: span 2;">
+                        <span class="stat-label">Top Values</span>
+                        <span class="stat-value" style="font-size: 1em; color: #6a737d; margin-top: 15px;">⚠️ High Cardinality (ID / Free Text)</span>
+                    </div>
+                    {% else %}
+                    <div class="stat-box" style="grid-column: span 2;">
+                        <span class="stat-label">Top Categories</span>
+                        <div class="top-values-list">
+                            
+                            <!-- Jinja trova il valore massimo per calcolare la percentuale della barra -->
+                            {% set max_count = stats.top_values.values() | max %}
+                            
+                            {% for val, count in stats.top_values.items() %}
+                                <div class="top-values-row">
+                                    <div class="top-values-header">
+                                        <span style="color: #24292e;">{{ val }}</span>
+                                        <span style="font-weight: bold; color: #0366d6;">{{ count }}</span>
+                                    </div>
+                                    <!-- Disegna la barra proporzionale in CSS puro -->
+                                    <div class="bar-bg">
+                                        <div class="bar-fill" style="width: {{ (count / max_count * 100) }}%;"></div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+
+                <div class="stat-box">
+                    <span class="stat-label">Missing Values</span>
+                    <span class="stat-value" style="color: #ff9800;">{{ stats.null_count }}</span>
+                </div>
+
             </div>
         </div>
         {% endfor %}

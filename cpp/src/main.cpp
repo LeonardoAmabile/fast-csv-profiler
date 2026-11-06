@@ -14,22 +14,22 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Analyzing " << input_csv << "...\n";
 
+    // Fa partire il cronometro
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    // Initialization (for simplicity, we assume 10 columns for the MVP)
     Profiler profiler; 
     MmapReader reader(input_csv);
 
-    // Pass the process_row function to the reader using a lambda
     reader.process_lines([&profiler](const std::vector<std::string_view>& row) {
         profiler.process_row(row);
     });
 
-    // Export the results
-    profiler.generate_json(output_json);
-
+    // Ferma il cronometro
     auto end_time = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> diff = end_time - start_time;
+
+    // Genera il JSON passando ENTRAMBI gli argomenti (file e tempo)
+    profiler.generate_json(output_json, diff.count());
 
     std::cout << "Analysis completed in " << diff.count() << " seconds.\n";
     std::cout << "Report saved to " << output_json << "\n";

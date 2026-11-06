@@ -1,7 +1,7 @@
 import argparse
 import sys
 from engine_runner import run_cpp_profiler
-from report_builder import build_report  # <-- New import
+from report_builder import build_report
 
 def main():
     parser = argparse.ArgumentParser(
@@ -20,10 +20,10 @@ def main():
         # 2. Generate the HTML report
         build_report(data=stats, output_path=args.out)
         
-        print("\n✅ All done! Open the HTML file in your web browser to view the results.")
+        print("\n All done! Open the HTML file in your web browser to view the results.")
         
     except Exception as e:
-        print(f"❌ Execution error: {e}")
+        print(f" Execution error: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

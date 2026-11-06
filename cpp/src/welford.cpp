@@ -30,6 +30,10 @@ double Welford::get_variance() const {
     return m2 / (count - 1); // Sample variance
 }
 
+double Welford::get_std_dev() const {
+    return std::sqrt(get_variance());
+}
+
 double Welford::get_mean() const {
     return mean;
 }    

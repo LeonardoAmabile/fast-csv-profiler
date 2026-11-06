@@ -20,6 +20,7 @@ public:
     // Getters for the final JSON report
     double get_mean() const;
     double get_variance() const;
+    double get_std_dev() const;
     double get_min() const;
     double get_max() const;
     unsigned long long get_null_count() const;
