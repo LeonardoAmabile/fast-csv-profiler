@@ -1,4 +1,4 @@
-# CoreProfile: Blazing-Fast Out-of-Core CSV Profiler
+# CoreProfile: High-Performance Out-of-Core CSV Profiler
 
 CoreProfile is a high-performance, cross-language tool designed to generate exploratory data analysis (EDA) reports for massive CSV datasets.
 
@@ -68,10 +68,10 @@ Open dashboard.html in any web browser to view your statistics!
 
 While the current architecture is highly optimized for single-threaded execution, future enhancements could push the performance even further:
 
-[ ] SIMD & Zero-cost Parsing: Replace std::stod with std::from_chars or fast_float libraries to drastically reduce string-to-double conversion times.
+- SIMD & Zero-cost Parsing: Replace std::stod with std::from_chars or fast_float libraries to drastically reduce string-to-double conversion times.
 
-[ ] Multithreaded Mmap Chunking: Divide the memory-mapped file into distinct chunks (respecting newline boundaries) to distribute the processing load across multiple CPU cores via std::thread.
+- Multithreaded Mmap Chunking: Divide the memory-mapped file into distinct chunks (respecting newline boundaries) to distribute the processing load across multiple CPU cores via std::thread.
 
-[ ] CI/CD Pipeline: Implement GitHub Actions with pytest (for Python) and GTest (for C++) to automatically validate mathematical accuracy and ensure the Welford algorithm remains stable on edge cases.
+- CI/CD Pipeline: Implement GitHub Actions with pytest (for Python) and GTest (for C++) to automatically validate mathematical accuracy and ensure the Welford algorithm remains stable on edge cases.
 
-Developed as a portfolio project bridging high-performance Systems Engineering with Data Science.
+### Developed as a portfolio project bridging high-performance Systems Engineering with Data Science.
