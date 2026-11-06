@@ -1,3 +1,13 @@
+/**
+ * @file welford.hpp
+ * @brief Implementation of Welford's online algorithm.
+ * 
+ * Allows computing numerical statistics (mean, variance, standard deviation) 
+ * in a single stream pass (O(N) time, O(1) space) without loading the dataset 
+ * into RAM, completely avoiding numeric overflow and catastrophic cancellation 
+ * common in naive sum-of-squares approaches.
+ */
+
 #pragma once
 
 class Welford {
@@ -10,14 +20,24 @@ private:
     double max_val;
 
 public:
-    // Constructor
     Welford();
 
-    // Core methods to update the state row by row
+    /**
+     * @brief Updates the running mathematical statistics with a new value.
+     * 
+     * @param value The newly parsed numeric value from the data stream.
+     */
     void update(double value);
+    
+    /**
+     * @brief Increments the null counter for missing or empty numeric cells.
+     */
     void add_null();
 
-    // Getters for the final JSON report
+    // ==========================================
+    // Data Retrieval Methods (JSON Serialization)
+    // ==========================================
+    
     double get_mean() const;
     double get_variance() const;
     double get_std_dev() const;
